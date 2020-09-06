@@ -81,7 +81,7 @@ def put_user():
     return {
         "message": "created",
         "user": user_data,
-    }
+    }, HTTPStatus.CREATED.value
 
 
 @api_v1.route("/users/put-random-user", methods=("GET",))
