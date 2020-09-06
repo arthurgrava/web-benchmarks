@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from benchmark_common import cached, models
 from elasticsearch.exceptions import NotFoundError
-from flask import abort, Blueprint, current_app, jsonify
+from flask import abort, Blueprint, current_app, jsonify, request
 
 from .config import ES_INDEX
 
@@ -37,6 +37,13 @@ def _get_user_chached_if_possible(user_id):
     dict_user = schema.dump(user)
     return dict_user
 
+@cache.get("flask_users_search")
+def _search_users(name):
+    results = current_app.es.search_user(ES_INDEX, name)
+    return [
+        schema.dump(res) for res in results
+    ]
+
 
 @api_v1.route("/user/<user_id>", methods=("GET",))
 def get_user(user_id):
@@ -44,3 +51,24 @@ def get_user(user_id):
         return _get_user_chached_if_possible(user_id)
     except NotFoundError as e:
         abort(HTTPStatus.NOT_FOUND.value, description=str(e))
+
+@api_v1.route("/users", methods=("GET",))
+def get_users():
+    name = request.args.get("name", "*")
+    results = _search_users(name)
+    if not results:
+        msg = f"No users for search with term {name}"
+        abort(HTTPStatus.NOT_FOUND.value, description=msg)
+    return {
+        "users": results,
+    }
+
+
+@api_v1.route("/users", methods=("POST", "PUT",))
+def put_user():
+    raise NotImplementedError("To be implemented")
+
+
+@api_v1.route("/users/put-random-user", methods=("GET",))
+def put_random_user():
+    raise NotImplementedError("To be implemented")

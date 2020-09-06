@@ -29,5 +29,14 @@ class DB:
         document = self.es.get(index, user_id, doc_type=DOC_TYPE)
         return self.user_schema.load(document["_source"])
 
-    def search_user(self, index: str, user_name: str) -> List[m.User]:
-        pass # for now
+    def search_user(self, index: str, user_name: str, offset: int = 0, limit: int = 10) -> List[m.User]:
+        res = self.es.search(
+            index=index,
+            q=user_name,
+            from_=offset,
+            size=limit,
+        )
+        return [
+            self.user_schema.load(hit["_source"])
+            for hit in res["hits"]["hits"]
+        ]
