@@ -49,7 +49,10 @@ def _search_users(name, limit, offset):
 @api_v1.route("/users/<user_id>", methods=("GET",))
 def get_user(user_id):
     try:
-        return _get_user_chached_if_possible(user_id)
+        user = _get_user_chached_if_possible(user_id)
+        return {
+            "user": user,
+        }
     except NotFoundError as e:
         abort(HTTPStatus.NOT_FOUND.value, description=str(e))
 
@@ -68,9 +71,17 @@ def get_users():
     }
 
 
-@api_v1.route("/users", methods=("POST", "PUT",))
+@api_v1.route("/users", methods=("PUT",))
 def put_user():
-    raise NotImplementedError("To be implemented")
+    user_data = request.json
+    current_app.es.put_user(
+        index=ES_INDEX,
+        user=schema.dump(user_data),
+    )
+    return {
+        "message": "created",
+        "user": user_data,
+    }
 
 
 @api_v1.route("/users/put-random-user", methods=("GET",))
