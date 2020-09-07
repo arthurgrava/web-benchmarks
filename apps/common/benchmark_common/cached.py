@@ -5,8 +5,8 @@ import redis
 
 
 class Cacher:
-    def __init__(self):
-        self.conn = redis.Redis()
+    def __init__(self, host: str, port: int):
+        self.conn = redis.Redis(host=host, port=port)
 
     def _build_key(self, prefix, *args, **kwargs):
         values = [prefix] + [str(e) for e in args] + [str(e) for e in kwargs.values()]

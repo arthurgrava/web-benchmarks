@@ -26,7 +26,10 @@ create-elastic:
 		docker.elastic.co/elasticsearch/elasticsearch:7.9.1
 
 start-elastic:
-	docker start --name benchmark-elasticsearch
+	docker start benchmark-elasticsearch
 
 stop-elastic:
 	docker stop benchmark-elasticsearch
+
+start-flask-app:
+	python apps/flask-app/main.py

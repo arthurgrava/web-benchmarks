@@ -4,13 +4,13 @@ from benchmark_common import cached, models, utils
 from elasticsearch.exceptions import NotFoundError
 from flask import abort, Blueprint, current_app, jsonify, request
 
-from .config import ES_INDEX
+from .config import ES_INDEX, REDIS_HOST, REDIS_PORT
 
 
 live = Blueprint("Liveness", __name__, url_prefix="/")
 api_v1 = Blueprint("V1 api", __name__, url_prefix="/v1")
 schema = models.UserSchema()
-cache = cached.Cacher()
+cache = cached.Cacher(REDIS_HOST, REDIS_PORT)
 
 
 @live.route("/", methods=("GET",))

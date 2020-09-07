@@ -9,8 +9,8 @@ DOC_TYPE = "_doc"
 
 
 class DB:
-    def __init__(self):
-        self.es = Elasticsearch()
+    def __init__(self, host: str) -> None:
+        self.es = Elasticsearch(hosts=[host])
         self.user_schema = m.UserSchema()
 
     def create_index_if_doesnt_exist(self, index: str) -> None:

@@ -17,5 +17,7 @@ push: version
 
 flask-build:
 	make build APP=flask-app IMG=flask-bench-app
-	make tag APP=flask-app IMG=flask-bench-app
-	make push APP=flask-app IMG=flask-bench-app
+	make tag APP=flask-app IMG=flask-bench-app REPO=arthurgrava
+	make push APP=flask-app IMG=flask-bench-app REPO=arthurgrava
+	# make tag APP=flask-app IMG=flask-bench-app REPO=localhost:5000
+	# make push APP=flask-app IMG=flask-bench-app REPO=localhost:5000
