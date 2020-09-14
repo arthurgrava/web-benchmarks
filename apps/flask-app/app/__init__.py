@@ -9,9 +9,17 @@ from . import (
 )
 
 
+def register_blueprints(app: Flask):
+    blueprints = [
+        routes.live,
+        routes.api_v1,
+    ]
+    for blueprint in blueprints:
+        app.register_blueprint(blueprint)
+
+
 def create_app():
     app = Flask(config.APP_NAME)
-    app.register_blueprint(routes.live)
-    app.register_blueprint(routes.api_v1)
+    register_blueprints(app)
     app.es = db.DB(config.ES_HOST)
     return app
