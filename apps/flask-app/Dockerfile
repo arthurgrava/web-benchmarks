@@ -5,7 +5,10 @@ LABEL author="Arthur Grava <arthur.grava@gmail.com>"
 RUN apt update
 RUN apt install gcc -y
 
-COPY ./common ./common
-COPY ./flask-app ./flask-app
+RUN mkdir -p /application
 
-RUN pip install -r ./flask-app/requirements.txt
+COPY ./common /application/common
+COPY ./flask-app /application/flask-app
+
+WORKDIR /application/flask-app
+RUN pip install -r /application/flask-app/requirements.txt

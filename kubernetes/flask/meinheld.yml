@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-meinheld
+  namespace: loadtest
+  labels:
+    app: flask-meinheld
+spec:
+  replicas: 1
+  selector:
+     matchLabels:
+       app: flask-meinheld
+  template:
+    metadata:
+      labels:
+        app: flask-meinheld
+    spec:
+      containers:
+      - name: flask-meinheld
+        image: arthurgrava/flask-bench-app:0.0.1
+        imagePullPolicy: Always
+        command: ['gunicorn', '-b', '0.0.0.0:8881', '-k', 'egg:meinheld#gunicorn_worker', '-w', '4', 'main:app']
+        ports:
+        - containerPort: 8881
+          name: metrics
+        env:
+        - name: VERSION
+          value: '0.0.1'
+        - name: ES_HOST
+          value: 'elasticsearch:9200'
+        - name: ES_INDEX
+          value: 'flask-users'
+        - name: REDIS_HOST
+          value: 'redis'
+        - name: REDIS_PORT
+          value: '6379'
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-meinheld
+  namespace: loadtest
+spec:
+  ports:
+  - port: 8881
+  selector:
+    app: flask-meinheld
