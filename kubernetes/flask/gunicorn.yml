@@ -19,7 +19,7 @@ spec:
       - name: flask-gunicorn
         image: arthurgrava/flask-bench-app:0.0.1
         imagePullPolicy: Always
-        command: ['gunicorn', '-b',  '0.0.0.0:8881', '-w', '4', 'main:app']
+        command: ['gunicorn', '-b', '0.0.0.0:8881', '-w', '4', 'main:app']
         ports:
         - containerPort: 8881
           name: metrics
