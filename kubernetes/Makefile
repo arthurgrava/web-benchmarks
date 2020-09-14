@@ -1,4 +1,5 @@
 ENV ?= test
+APP ?= flask
 
 select-env:
 	kubectl config use-context ${ENV}
@@ -12,3 +13,9 @@ destroy-common: select-env
 	kubectl delete -f common/elasticsearch.yml
 	kubectl delete -f common/redis.yml
 	kubectl delete -f common/namespace.yml
+
+apply-app: select-env
+	kubectl apply -f ${APP}/
+
+destroy-app: select-env
+	kubectl delete -f ${APP}/
