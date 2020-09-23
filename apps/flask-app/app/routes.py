@@ -1,16 +1,16 @@
 from http import HTTPStatus
 
-from benchmark_common import cached, models, utils
+from benchmark_common import models, utils
 from elasticsearch.exceptions import NotFoundError
 from flask import abort, Blueprint, current_app, jsonify, request
 
 from .config import ES_INDEX, REDIS_HOST, REDIS_PORT
+from . import control
 
 
 live = Blueprint("Liveness", __name__, url_prefix="/")
 api_v1 = Blueprint("V1 api", __name__, url_prefix="/v1")
 schema = models.UserSchema()
-cache = cached.Cacher(REDIS_HOST, REDIS_PORT)
 
 
 @live.route("/", methods=("GET",))
@@ -31,25 +31,21 @@ def not_found_handler(err):
     return jsonify(message=str(err)), HTTPStatus.INTERNAL_SERVER_ERROR.value
 
 
-@cache.get("flask_users")
-def _get_user_chached_if_possible(user_id):
-    user = current_app.es.get_user(ES_INDEX, str(user_id))
-    dict_user = schema.dump(user)
-    return dict_user
-
-
-@cache.get("flask_users_search")
-def _search_users(name, limit, offset):
-    results = current_app.es.search_user(ES_INDEX, name, offset, limit)
-    return [
-        schema.dump(res) for res in results
-    ]
-
-
 @api_v1.route("/users/<user_id>", methods=("GET",))
 def get_user(user_id):
     try:
-        user = _get_user_chached_if_possible(user_id)
+        cache_result = bool(request.args.get("cache"))
+        print(cache_result)
+        if cache_result:
+            user = control.get_user_chached_if_possible_cached(
+                current_app.es,
+                user_id,
+            )
+        else:
+            user = control.get_user_chached_if_possible(
+                current_app.es,
+                user_id,
+            )
         return {
             "user": user,
         }
@@ -62,7 +58,23 @@ def get_users():
     name = request.args.get("name", "*")
     limit = request.args.get("limit", 10)
     offset = request.args.get("offset", 0)
-    results = _search_users(name, limit, offset)
+    cache_result = bool(request.args.get("cache"))
+    print(cache_result)
+    if cache_result:
+        results = control.search_users_cached(
+            current_app.es,
+            name,
+            limit,
+            offset,
+        )
+    else:
+        results = control.search_users(
+            current_app.es,
+            name,
+            limit,
+            offset,
+        )
+    
     if not results:
         msg = f"No users for search with term {name}"
         abort(HTTPStatus.NOT_FOUND.value, description=msg)
@@ -93,4 +105,17 @@ def put_random_user():
     )
     return {
         "message": "created"
+    }
+
+@api_v1.route("/sleep/users/<user_id>")
+def get_user_performing_sleep(user_id):
+    return {
+        "user": control.give_it_some_sleep_return_dict()
+    }
+
+@api_v1.route("/sleep/users")
+def get_users_performing_sleep():
+    limit = int(request.args.get("limit", 10))
+    return {
+        "users": control.give_it_some_sleep_return_list_of_dict(limit)
     }
