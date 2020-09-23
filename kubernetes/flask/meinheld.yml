@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: flask-meinheld
-        image: arthurgrava/flask-bench-app:0.0.1
+        image: arthurgrava/flask-bench-meinheld:0.0.2
         imagePullPolicy: Always
         command: ['gunicorn', '-b', '0.0.0.0:8881', '-k', 'egg:meinheld#gunicorn_worker', '-w', '4', 'main:app']
         ports:
@@ -37,10 +37,10 @@ spec:
         resources:
           limits:
             cpu: 500m
-            memory: 500Mi
+            memory: 1500Mi
           requests:
-            cpu: 100m
-            memory: 500Mi
+            cpu: 300m
+            memory: 1000Mi
 ---
 apiVersion: v1
 kind: Service

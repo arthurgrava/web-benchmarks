@@ -30,11 +30,11 @@ spec:
           image: elasticsearch:7.9.1 # don't forget to adjust your requiments.txt file
           resources:
             requests:
-              cpu: 1000m
-              memory: 2500Mi
+              cpu: 3000m
+              memory: 5000Mi
           env:
           - name: ES_JAVA_OPTS
-            value: -Xms2048m -Xmx2048m
+            value: -Xms4096m -Xmx4096m
           - name: discovery.type
             value: single-node
 ---

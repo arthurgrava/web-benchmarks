@@ -17,9 +17,9 @@ spec:
     spec:
       containers:
       - name: flask-uwsgi
-        image: arthurgrava/flask-bench-app:0.0.1
+        image: arthurgrava/flask-bench-uwsgi:0.0.2
         imagePullPolicy: Always
-        command: ['uwsgi', '--http', '127.0.0.1:8881', '--processes', '4', '--module', 'main:app']
+        command: ['uwsgi', '--http', '0.0.0.0:8881', '--processes', '4', '--module', 'main:app']
         ports:
         - containerPort: 8881
           name: metrics
@@ -37,10 +37,10 @@ spec:
         resources:
           limits:
             cpu: 500m
-            memory: 500Mi
+            memory: 1500Mi
           requests:
-            cpu: 100m
-            memory: 500Mi
+            cpu: 300m
+            memory: 1000Mi
 ---
 apiVersion: v1
 kind: Service

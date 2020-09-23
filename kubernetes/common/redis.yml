@@ -22,8 +22,8 @@ spec:
         image: redis:6.0.7-buster
         resources:
           requests:
-            cpu: 1000m
-            memory: 2000Mi
+            cpu: 2000m
+            memory: 5000Mi
         ports:
         - containerPort: 6379
 ---
