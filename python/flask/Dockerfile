@@ -10,6 +10,9 @@ RUN mkdir /application
 COPY ./common /application/common
 COPY ./flask /application/flask
 
+RUN pip install -e /application/common
+RUN pip install -r /application/flask/requirements.txt
+
 WORKDIR /application/flask
 
-CMD ["/application/flask/run.sh"]
+CMD ["./run.sh"]

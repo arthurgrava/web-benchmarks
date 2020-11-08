@@ -152,6 +152,7 @@ dmypy.json
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
 
 *.txt
+!dev-requirements.txt
 !requirements.txt
 *.csv
 data/

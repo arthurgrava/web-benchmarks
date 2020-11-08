@@ -6,5 +6,5 @@ terraform {
 
 provider "kubernetes" {
   config_context = "minikube"
-  version = "1.13.3"
+  version        = "1.13.3"
 }
