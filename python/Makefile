@@ -1,27 +1,29 @@
+APP ?= flask
+IMAGE ?= web-benchmarks
 REPO ?= arthurgrava
-DOCKERFILE ?= flask-app/imgs/Dockerfile.gunicorn
-APP ?= flask-app
-IMG ?= flask-bench-app
 
 
 version:
 	$(eval VERSION=$(shell cat ${APP}/VERSION))
 
-build:
-	docker build -t ${IMG} -f ${DOCKERFILE} ./
+echo: version
+	@echo ${APP}
+	@echo ${IMAGE}
+	@echo ${REPO}
+	@echo ${VERSION}
+	@echo ${REPO}/${IMAGE}:${APP}-${VERSION}
 
-tag: version
-	docker tag ${IMG}:latest ${REPO}/${IMG}:${VERSION}
+build: version
+	docker build -t ${IMAGE}:${APP}-${VERSION} -f ${APP}/Dockerfile ./
 
 push: version
-	docker push ${REPO}/${IMG}:${VERSION}
+	docker tag ${IMAGE}:${APP}-${VERSION} ${REPO}/${IMAGE}:${APP}-${VERSION}
+	docker push ${REPO}/${IMAGE}:${APP}-${VERSION}
 
-build-push:
-	make build
-	make tag
-	make push
+start:
+	make -C ${APP} start
 
 flask-build:
-	make build-push APP=flask-app IMG=flask-bench-gunicorn REPO=arthurgrava DOCKERFILE=flask-app/imgs/Dockerfile.gunicorn
-	make build-push APP=flask-app IMG=flask-bench-meinheld REPO=arthurgrava DOCKERFILE=flask-app/imgs/Dockerfile.meinheld
-	make build-push APP=flask-app IMG=flask-bench-uwsgi REPO=arthurgrava DOCKERFILE=flask-app/imgs/Dockerfile.uwsgi
+	make build APP=flask
+	make push APP=flask
+
