@@ -51,10 +51,10 @@ def transform_to_measure_file(data: pd.DataFrame, keep_columns: List[str]) -> pd
 def plot_latencies(data: pd.DataFrame, latency: pd.DataFrame, outfile: str) -> None:
     """
     Creates a plot with 4 different graphs and saves it to the `outfile`:
-    - Plot 1 :
-    - Plot 2 :
-    - Plot 3 :
-    - Plot 4 :
+    - Plot 1 : Latency percentiles (no max) through time
+    - Plot 2 : Number of requests per second through time
+    - Plot 3 : Number of concurrent users requesting the API through time
+    - Plot 4 : Number of requests per minute through time
     """
     fig, axs = plt.subplots(nrows=4)
     fig.set_figheight(15)
