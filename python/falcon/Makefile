@@ -1,0 +1,2 @@
+start:
+	gunicorn app:app
