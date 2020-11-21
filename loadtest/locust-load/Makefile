@@ -1,26 +1,26 @@
-CONFIG ?= "base.cfg"
-FILE ?= locustfiles/cached.py
 HOST ?= http://localhost:7000
 USERS ?= 100
-STEP_SIZE ?= 10
-STEP_TIME ?= 5s
-TIME ?= 3m
-OUTFILE ?= execution
+SPAWN_RATE ?= 0.05
+RUN_TIME ?= 30m
+CLASSES ?= "DBCall CalculationCall CompleteCall"
 
-include .local.env
+# My personal repo
+REPO ?= arthurgrava
 
 run:
-	locust -f ${FILE} \
-		--config ${CONFIG} \
+	locust -f app/calls.py--config app/base.cfg \
 		--host ${HOST} \
 		--users ${USERS} \
-		--step-load \
-		--step-users ${STEP_SIZE} \
-		--spawn-rate ${STEP_SIZE} \
-		--step-time ${STEP_TIME} \
-		--run-time ${TIME} \
-		--csv ${OUTFILE} \
-		GetUser SearchUser
+		--spawn-rate ${SPAWN_RATE} \
+		--run-time ${RUN_TIME} \
+		${CLASSES}
 
-local-run:
-	make run TIME=12m USERS=100 STEP_SIZE=10 STEP_TIME=1m
+version:
+	$(eval VERSION=$(shell cat VERSION))
+
+build: version
+	docker build -t web-benchmarks:locust-${VERSION} -f Dockerfile .
+
+push: build version
+	docker tag web-benchmarks:locust-${VERSION} ${REPO}/web-benchmarks:locust-${VERSION}
+	docker push ${REPO}/web-benchmarks:locust-${VERSION}

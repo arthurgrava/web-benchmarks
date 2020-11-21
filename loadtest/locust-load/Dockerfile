@@ -1,12 +1,9 @@
-FROM python:3.7-slim-stretch
+FROM locustio/locust:1.3.2
 
 LABEL author="Arthur Grava <arthur.grava@gmail.com>"
 
-RUN apt update
-RUN apt install gcc -y
+RUN mkdir app
 
-RUN mkdir -p /app
+COPY app/ app/
 
-COPY . /app
-
-RUN pip install -r /app/requirements.txt
+CMD [ "locust", "-f", "app/calls.py" ]
