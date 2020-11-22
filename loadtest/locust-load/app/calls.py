@@ -1,8 +1,9 @@
-from locust import HttpUser, between, task
+from locust import constant, task
+from locust.contrib.fasthttp import FastHttpUser
 
 
-class Base(HttpUser):
-    wait_time = between(.1, .5)
+class Base(FastHttpUser):
+    wait_time = constant(0)
 
     def make_a_call_to(self, url, call_name):
         self.client.get(url, name=call_name)
@@ -24,3 +25,10 @@ class CompleteCall(Base):
     @task
     def db_call(self):
         self.make_a_call_to("/api/complete", "complete")
+
+
+class LiveCall(Base):
+
+    @task
+    def db_call(self):
+        self.make_a_call_to("/api/live", "live")

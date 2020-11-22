@@ -9,3 +9,9 @@ variable "falcon" {
   default     = false
   description = "If you want to run falcon set it to true"
 }
+
+variable "locust" {
+  type        = bool
+  default     = false
+  description = "If you want to start a locust pod"
+}
